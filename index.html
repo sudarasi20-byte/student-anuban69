@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ประกาศห้องเรียน - โรงเรียนสำเร็จวิทยา</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    :root {
+      --primary: #1a56db;
+      --primary-hover: #1e40af;
+      --line-color: #06C755;
+      --line-hover: #05b34c;
+      --text-dark: #1f2937;
+      --text-gray: #6b7280;
+      --bg-color: #f3f4f6;
+    }
+
+    body { 
+      font-family: 'Sarabun', sans-serif; 
+      background-color: var(--bg-color); 
+      color: var(--text-dark); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+      margin: 0; 
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .container { 
+      background: #ffffff; 
+      padding: 40px 30px; 
+      border-radius: 16px; 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      text-align: center; 
+      max-width: 420px; 
+      width: 100%; 
+    }
+
+    .logo {
+      width: 240px;
+      height: auto;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    h1 { color: var(--primary); font-size: 24px; margin: 0 0 8px 0; font-weight: 600; }
+    h2 { color: var(--text-dark); font-size: 18px; margin: 0 0 4px 0; font-weight: 500; }
+    p.subtitle { color: var(--text-gray); font-size: 15px; margin: 0 0 30px 0; }
+    
+    input[type="text"] { 
+      width: 100%; 
+      padding: 14px 16px; 
+      margin: 0 0 20px 0; 
+      border: 1.5px solid #d1d5db; 
+      border-radius: 10px; 
+      font-size: 16px; 
+      font-family: 'Sarabun', sans-serif; 
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      background-color: #f9fafb;
+    }
+    
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+    }
+    
+    button { 
+      background-color: var(--primary); 
+      color: white; 
+      padding: 14px 20px; 
+      border: none; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-size: 16px; 
+      font-weight: 600;
+      font-family: 'Sarabun', sans-serif; 
+      width: 100%; 
+      transition: all 0.3s ease; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    button:hover { 
+      background-color: var(--primary-hover); 
+      transform: translateY(-1px);
+    }
+    
+    /* กล่องแสดงผลลัพธ์ */
+    .result-card { 
+      display: none; 
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-box {
+      background: #f8fafc; 
+      padding: 20px; 
+      border-radius: 12px; 
+      text-align: left; 
+      border: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    .detail-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    
+    .detail-row:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .label { font-size: 14px; color: var(--text-gray); margin-bottom: 4px; }
+    .value { font-size: 16px; color: var(--text-dark); font-weight: 600; }
+    
+    #loading { display: none; color: var(--primary); margin-top: 15px; font-size: 14px; font-weight: 500; }
+    
+    /* สไตล์ปุ่ม Line */
+    .btn-line { 
+      background-color: var(--line-color); 
+      margin-bottom: 8px;
+      text-decoration: none;
+    }
+    .btn-line:hover { background-color: var(--line-hover); }
+
+    .line-note {
+      color: #ef4444; /* สีแดงแจ้งเตือนให้ชัดเจน */
+      font-size: 14px;
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-weight: 500;
+      display: none; /* ซ่อนไว้ก่อน จะแสดงพร้อมปุ่ม */
+    }
+
+    .btn-secondary { 
+      background-color: #f3f4f6; 
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+    }
+    .btn-secondary:hover { 
+      background-color: #e5e7eb; 
+      color: #1f2937;
+    }
+
+    /* ส่วนของ Facebook Footer */
+    .footer-social {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .fb-link {
+      color: #1877F2; /* สีฟ้าของ Facebook */
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .fb-link:hover {
+      color: #166fe5;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="https://lh3.googleusercontent.com/d/1rkvcH2wyhcm-iJm8HNhvr7s7uX7eoZCv" alt="School Logo" class="logo">
+    
+    <h1>โรงเรียนสำเร็จวิทยา</h1>
+    <h2>ประกาศห้องเรียน</h2>
+    <p class="subtitle">ชั้น อ.1 ถึง อ.3 ปีการศึกษา 2569</p>
+
+    <div id="search-section">
+      <input type="text" id="studentId" placeholder="กรอกเลขบัตรประชาชน หรือ G-Code ของนักเรียน" autocomplete="off" onkeypress="handleKeyPress(event)">
+      <button onclick="searchData()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        ตรวจสอบข้อมูล
+      </button>
+      <div id="loading">กำลังค้นหาข้อมูล กรุณารอสักครู่...</div>
+    </div>
+
+    <div id="result-section" class="result-card">
+      <div class="info-box">
+        <div class="detail-row">
+          <span class="label">เลขประจำตัวนักเรียน</span>
+          <span class="value" id="res-student-id"></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">ชื่อ-นามสกุล</span>
+          <span class="value" id="res-name"></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">ห้องเรียน</span>
+          <span class="value" id="res-room"></span>
+        </div>
+        <div class="detail-row">
+          <span class="label">ครูประจำชั้น</span>
+          <span class="value" id="res-teacher"></span>
+        </div>
+      </div>
+      
+      <a id="res-line-btn" href="#" target="_blank" style="display: none; text-decoration: none;">
+        <button class="btn-line">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 10.304c0-4.37-3.955-7.93-8.815-7.93-4.86 0-8.815 3.56-8.815 7.93 0 3.963 2.87 7.28 6.78 7.828.263.056.623.17.753.392.118.2.078.508.037.697-.04.185-.258 1.554-.315 1.884-.092.53-.42 2.05 1.792 1.116 2.213-.935 8.01-4.72 10.155-7.857.943-1.39 1.428-2.738 1.428-4.06z"/>
+          </svg>
+          เข้ากลุ่ม Line ห้องเรียน
+        </button>
+      </a>
+      <div id="res-line-note" class="line-note">*กลุ่มไลน์เฉพาะผู้ปกครองเท่านั้น</div>
+
+      <button class="btn-secondary" onclick="resetForm()">ค้นหาข้อมูลใหม่</button>
+    </div>
+
+    <!-- ส่วนติดตาม Facebook ของโรงเรียน -->
+    <div class="footer-social">
+      <a href="https://www.facebook.com/Samrej2479" target="_blank" class="fb-link">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        เพื่อติดตามข่าวสารที่เป็นทางการจากโรงเรียน
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    // เพิ่มฟังก์ชันให้กด Enter เพื่อค้นหาได้
+    function handleKeyPress(e) {
+      if(e.key === 'Enter'){
+        searchData();
+      }
+    }
+
+    function searchData() {
+      const id = document.getElementById('studentId').value.trim();
+      
+      if(!id) {
+        Swal.fire({ 
+          icon: 'warning', 
+          title: 'ข้อผิดพลาด', 
+          text: 'กรุณากรอกเลขบัตรประชาชน หรือ G-Code ค่ะ', 
+          confirmButtonColor: '#1a56db',
+          fontFamily: 'Sarabun'
+        });
+        return;
+      }
+
+      document.getElementById('loading').style.display = 'block';
+      
+      // เรียกใช้งานฟังก์ชันฝั่งเซิร์ฟเวอร์
+      google.script.run.withSuccessHandler(showResult).searchStudent(id);
+    }
+
+    function showResult(result) {
+      document.getElementById('loading').style.display = 'none';
+
+      if(result.found) {
+        // กรณีพบข้อมูล - แมปข้อมูลให้ตรงกับ ID
+        document.getElementById('res-student-id').innerText = result.studentId;
+        document.getElementById('res-name').innerText = result.name;
+        document.getElementById('res-room').innerText = result.room;
+        document.getElementById('res-teacher').innerText = result.teacher;
+
+        // จัดการปุ่ม Line และข้อความเตือน
+        const lineBtnContainer = document.getElementById('res-line-btn');
+        const lineNote = document.getElementById('res-line-note');
+        
+        if (result.lineLink && result.lineLink !== "") {
+          lineBtnContainer.href = result.lineLink;
+          lineBtnContainer.style.display = 'block'; // แสดงปุ่มเมื่อมีลิงก์
+          lineNote.style.display = 'block'; // แสดงข้อความเตือนเมื่อมีลิงก์
+        } else {
+          lineBtnContainer.style.display = 'none'; // ซ่อนปุ่มถ้าไม่มีลิงก์
+          lineNote.style.display = 'none'; // ซ่อนข้อความเตือนถ้าไม่มีลิงก์
+        }
+
+        document.getElementById('search-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+      } else {
+        // กรณีไม่พบข้อมูล
+        Swal.fire({
+          icon: 'error',
+          title: 'ไม่พบข้อมูลนักเรียน',
+          html: 'กรุณาติดต่อครูประจำชั้นเดิม<br>หรือหากเป็นนักเรียนใหม่ กรุณาติดต่อห้องธุรการค่ะ',
+          confirmButtonColor: '#1a56db'
+        });
+        document.getElementById('studentId').value = ''; 
+        document.getElementById('studentId').focus();
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('studentId').value = '';
+      document.getElementById('search-section').style.display = 'block';
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('studentId').focus();
+    }
+  </script>
+
+</body>
+</html>
